@@ -1,0 +1,608 @@
+---
+title: "Data Analysis and Documentation with R"
+author: 'Athar Ali Khan: Email atharkhan1962@gmail.com'
+date: "December 9, 2019"
+output:
+  html_document:
+   toc: yes
+   number_sections: yes
+---
+# Introduction to R Language
+R is a language as well as a software. It was introduced by Ross Ihaka and Robert Gentleman in 1996. 
+
+## Basics of R
+R works like a calculator also. Let us create first chunk.
+```{r}
+x=5
+y=2
+z=x+y
+z
+```
+
+## Creating a vector---c()
+The function `c()` is used to create a vector. We can do operations on a vector also. We get arithmetic transformation of data vectors also.
+```{r}
+x=c(2,5,4,3,4)
+y=c(3,6,5,6,10)
+log(x)
+log(x,base=10)
+log(x,base=2)
+exp(x) #antilog
+exp(log(x))# report orginal numbers
+```
+
+## Getting summary features of a data vector
+We get summary features of a data vectors, like mean, sd, median and quartiles.
+
+```{r}
+mean(x)
+mean(y)
+sd(x)
+sd(y)
+median(x)
+quantile(x)
+quantile(x,prob=c(.25,.5,.75)) #quartiles
+min(x)
+max(x)
+#get length of the vector
+length(x)
+```
+
+## Defining a new function---`function()`
+
+In this subsection we define functions for computing standard error of mean `sem()` and coefficient of variation `cv()`. The function dumped using the function `dump()` and it can be sourced using the function `source()`.  
+```{r}
+#Define a function for standard error of mean
+sem=function(x) sd(x)/sqrt(length(x))
+#dump it as a text file
+dump("sem",file="sem.txt")
+#source it
+source("sem.txt")
+# Define a function for coefficient of variation
+cv=function(x) sd(x)/mean(x)*100
+dump("cv",file="cv.txt")
+source("cv.txt")
+# let us assume height of 6 students in cm is
+height=c(168,165,162,170,178,169)
+dump("height",file="height.dat")
+source("height.dat")
+#get their sem and cv
+sem(height)
+cv(height)
+```
+## Naming a vector and get barplot---`barplot()`
+
+```{r}
+x=c(2,5,4,3,4)
+names(x)=c("A","B","C","D","E")
+x
+barplot(x)
+#save it as png file
+png("FigBarplot.png")
+barplot(x)
+dev.off()
+```
+
+# Factor vector or categorical vector---`factor()`
+
+## Concept of a factor vector
+A factor vector is a kind of categorical vector in `R`. It is termed as qualitative variable also. For example, gender is a factor variable, its labels are male and female. Income is also a factor variable and its labels are low, median and high. It is created by using the function `factor`. It may be noted that factor variables are treated **differently** in `R` for analysis and graphics.
+
+```{r}
+#create a vector
+male=c(0,0,1,0,1,1)
+male
+#Change it into a facor vector
+Fmale=factor(male,labels=c("female","male"))
+Fmale
+# Create a vector of rating scale
+rating=c(3,1,2,2,3,1,1)
+rating
+Frating=factor(rating,labels=c("good","okay","bad"))
+Frating
+```
+
+
+# Study relation between variables---`cov(x,y)` and `cor(x,y)`
+
+We can study relation between x and y
+```{r}
+cov(x,y) # covariance between  x and y
+cor(x,y) # correlation between x and y
+```
+
+## Get Scatter plot and fitted line---`plot()`
+
+```{r}
+x=c(2,5,4,3,4)
+y=c(3,6,5,6,10)
+#Fit a line 
+M1=lm(y~x)
+coef(M1)
+#get aplot
+plot(x,y,pch=16,main="Scatter Plot")
+# add a fitted line
+abline(M1)
+text(3,7,"yhat=1.846+1.154x")
+# Save it as png file
+png("Fig1.png")
+plot(x,y,pch=16,main="Scatter Plot")
+# add a fitted line
+abline(M1)
+text(3,7,"yhat=1.846+1.154x")
+dev.off()
+```
+
+## Get plotting characters and colour options
+```{r}
+plot(x=1:20,y=1:20,pch=1:20,cex=1.5,col=1:20)
+## save the plot as a pdf file
+pdf("FigPlottingCharacters.pdf")
+plot(x=1:20,y=1:20,pch=1:20,cex=1.5,col=1:20)
+dev.off()
+```
+
+# Creation of a matrix---`matrix()` and `cbind()`, `rbind()`
+
+The function `cbind()` is meant for column wise binding whereas `rbind()` is meant for row wise binding.
+
+```{r}
+x1=c(2,4)
+x2=c(5,4)
+cmat1=cbind(x1,x2) # columnwise binding 
+cmat1
+rmat1=rbind(x1,x2) # rowwise binding
+rmat1
+```
+
+## Operations on matrices---`%*%`,`*`,`t()`, `det()`, ``solve()`
+
+```{r}
+cmat1%*%rmat1 # matrix multiplication
+cmat1*rmat1  # element wise multiplication
+t(cmat1) # transpose
+det(cmat1) #determinant
+solve(rmat1) # inverse
+```
+
+## Creation of listed data---`list()`
+
+Listed data combines different data types. For example, it can combine a numeric vector, a character string and a matrix together in one object.
+
+```{r}
+x=c(2,4,5)
+x2=c("Radha", "Salman")
+mat3=matrix(c(1,2,5,10),ncol=2)
+LD1=list(x=x,x2=x2,mat3=mat3)
+LD1
+LD1$mat3
+det(LD1$mat3)
+```
+
+# Creation of data frame---`data.frame()` and `read.table()`
+
+Data frame is like a data matrix. It is a kind of generalization of a matrix. In matrix all the elements must be of same type, here in a data frame a numeric column can be combined together with a column of logical or binary, with a column of character string. 
+
+```{r}
+height=c(168,165,170,162,168) #numeric
+weight=c(60,55,68,57,58) #numeric
+female=c(0,1,0,0,1) #binary
+name=c("Ram","Nazia","Asjad","Ajmal","Radhika") #Character string 
+
+#Combnie all the above in a single object, whci is a data frame
+DF1=data.frame(height,weight,female,name)
+print(DF1)
+## Save it using write.table()
+write.table(DF1, file="DF1.txt")
+
+# Create a data frame from text file DF1.txt using read.table()
+DF1=read.table("DF1.txt",header=TRUE)
+DF1
+```
+The function `read.table()` can be used to read data from a website also, just give the full path of the file, like `https//.../DF1`.
+
+## Having a nice output---`kable()` of package `knitr`
+
+To have a nice output one can use the function `kable()` of `kintr` package.
+
+```{r,results='asis',echo=TRUE,message=FALSE}
+require(knitr)
+kable(DF1,caption="Data Frame with kable")
+```
+
+## Creation of a data frame from Excel
+
+ We can create data into `Excel` and call into `R` as a data frame. Note that data in `Excel` should be entered with first row as name of the variables. After entering data it should be saved as *comma delimited* that is as a `.csv` file in same working folder, and then it could be called by `R` using the function `read.csv`. 
+ 
+```{r}
+Weightheight=read.csv("Weightheight.csv")
+Weightheight
+names(Weightheight)=c("Height", "Weight", "Gender")
+WH=Weightheight
+WH
+write.csv(WH, file="WH.csv",row.names=FALSE)
+```
+
+# Graphics with `R`
+
+There are three main graphics in `R`
+
+* Base graphics due to Robert Gentleman
+
+* `lattice` package due to Deepayan Sarkar
+
+* `ggplot2` due Wickhem.
+
+We shall discuss only the base graphics in this document.
+
+## The function `curve`
+
+It is a general purpose plotting function. It requires only expression or function to be plotted along with its range on x-axis. A simple example is plotting of a parabola.
+
+```{r}
+curve(x^2, from=-3,to=3, main="Plot of a parabola")
+#to save it as png file
+png("FigParabola.png")
+curve(x^2, from=-3,to=3, main="Plot of a parabola")
+dev.off()
+```
+
+## Define a new function and plot it
+Suppose you want to plot a function
+$$f2(x)=2+3x+4x^2$$
+You can do that by defining the function in `R` which can be plotted using the function `curve` as:
+
+```{r}
+# Define the function
+f2=function(x) 2+3*x+4*x^2
+#plot it in the range of -3 to to 3
+curve(f2(x), from=-3,to=3, lwd=2)
+```
+
+## Students' t test---`t.test()`
+Students' t test is used for comparing two means. We want to compare the two groups of lazy and sporty patients in terms of their average weights(in kg).  Data and its analysis is reported in the following chunk.
+```{r}
+wt_lazy=c(76,101,66,72,88,82,79,73,76,85,75,64,76,81,86)
+wt_sporty=c(64,65,56,62,59,76,66,82,91,57,92,80,82,67,54)
+length(wt_lazy)
+length(wt_sporty)
+# Use t.test() to compare means
+t.test(wt_lazy, wt_sporty, var.equal = TRUE)
+# Same result can be obtained by organizing data in a data frame
+weight_ls=data.frame(wtl=wt_lazy, wts=wt_sporty)
+head(weight_ls)
+# Use t test for this data frame
+with(weight_ls,t.test(wtl,wts, var.equal = TRUE))
+```
+
+## Students' t test for stacked data
+We stack the data using the command `stack` so that one column represents weight and other column represents grouping factor women.
+```{r}
+wtstack=stack(weight_ls)
+head(wtstack)
+names(wtstack)=c("weight","women")
+head(wtstack)
+tail(wtstack)
+str(wtstack)
+# Save the data
+write.table(wtstack, file="wtstack.txt")
+# Now use t test
+M1=t.test(weight~women,var.equal=TRUE, data=wtstack)
+M1
+names(M1)
+M1$p.value
+M1$conf.int
+```
+
+## Graphic output of Students't analysis
+Box plot is the best summary of this kind of data.
+```{r}
+wtstack=read.table("wtstack.txt", header=TRUE)
+plot(weight~women, data=wtstack)
+```
+
+From this plot it is evident that the weight of sporty women is less than that lazy. This difference is statistically significant also. It is evident that both the weights are positively skewed.
+
+## Another plot `plot.design`
+
+In `plot.design` the main argument is the data frame.
+```{r}
+plot.design(wtstack)
+```
+
+In the above plot the big horizontal line represents overall mean, whereas small horizontal lines represent weight of sporty `wts` and lazy `wtl` women. From this plot it is evident that sporty has much less weight than the lazy.  
+
+# Analysis of variance
+
+To compare more than two groups t test can not be used and one has to go for analysis of variance technique.
+
+## Calcium trial data
+In a calcium trial data 4 levels of concentrations of calcium were used as A=1, B=5, C=10, D=20; root length(cm) was the response. Create data and analyze it into `R` using analysis of variance technique.
+```{r}
+Calcium=expand.grid(Replicate=paste0("R",1:5), Concentration=c("A","B","C","D"))
+head(Calcium)
+# Add a column of Length in the data frame Calcium using $ operator
+Calcium$Length=c(58,52,74,58,79,
+                 80,68,72,74,85,
+                 49,70,72,74,71,
+                 47,49,45,48,38)
+head(Calcium)
+# save it to a text file "Calcium.txt"
+write.table(Calcium, file="Calcium.txt")
+```
+
+## Analysis of variance---`aov()`
+
+```{r}
+Calcium=read.table("Calcium.txt", header=TRUE)
+names(Calcium)
+# Fit a model
+calaov=aov(Length~Concentration, data=Calcium)
+summary(calaov)
+```
+
+From above summary of results it is evident that there is significant difference among the four group of concentrations of Calcium as `p value`, `Pr(>F)=0.000409` which is much less than `0.05`. Now we shall have to look into the pairwise comparisons using `TukeyHSD` command.
+
+## Tukeys Honest Significant Difference Analysis---`TukeyHSD()`
+
+`TukeyHSD` requires first of its argument, a fitted object with `aov` and second argument `which` which decides for which factor `TukyHSD` will be implemented.
+
+```{r}
+out1=TukeyHSD(calaov,which="Concentration")
+out1
+```
+
+From the `p value` it is evident that `D-A`, `D-B` and `D-C` are statistically significant contrasts. It is also to be noted that corresponding intervals of these contrasts do not contain zero. On the other hand other contrasts are not significant as their corresponding intervals contain zero and `p values` are greater than `0.05`. These facts can be nicely depicted in a graph. 
+
+## Plot of  `TukeyHSD`
+
+```{r}
+plot(out1)
+```
+
+From above plot it is clear that the vertical dashed line at zero is not crossing the intervals of significant contrasts.
+
+# Bayesian Modeling with **rstanarm** package
+
+Bayesian statistics is an approach to statistics which formally seeks use of prior information along with the data. These two sources of information are combined together to reach final inference. 
+
+```{r,results='hide',message=FALSE}
+require(rstanarm)
+# Fit model for wtstack data
+names(wtstack)
+M1=stan_glm(weight~women,data=wtstack)
+```
+
+## Find out the results of Bayesian analysis
+```{r}
+summary(M1)
+```
+
+## Get a graphic output of it
+```{r}
+plot(M1,prob=0.95)
+```
+
+## Intervals poterior and prective interval---`posterior_interval()`, `predictive_interval`
+
+```{r}
+#get the 95% credible interval
+posterior_interval(M1,prob=.95)
+#get predictive interval
+predictive_interval(M1,prob=0.95)
+```
+
+## Bayesian analysis of `Calcium` data---one way ANOVA
+
+```{r}
+Calcium=read.table("Calcium.txt",header=TRUE)
+str(Calcium)
+```
+
+### Fit it with---stan_glm()
+
+```{r,results='hide'}
+Mcalc=stan_glm(Length~Concentration,data=Calcium)
+```
+
+### Print summary of results
+
+```{r}
+summary(Mcalc)
+```
+
+## Get graphic output
+
+```{r}
+plot(Mcalc)
+```
+
+It is evident from this plot that `D-A` and `B-A` are significant, whereas `D-C` is not significant.
+
+## Posterior predictive check---`pp_check()`
+
+```{r}
+pp_check(Mcalc)
+```
+
+From this output it is evident that there is close agreement between observed and predicted $y$.
+
+## Bayesian LOOIC---__loo__ package
+
+Leave one out criteria is a criteria to check the predictive ability of the fitted model. It is meant for comparing model on the basis of loo criteria. However, here we are fitting it for a single model. For comparing two or more models, lower value of __looic__ indicates better fit of the model.
+
+```{r,message=FALSE}
+require(loo)
+loo(Mcalc)
+```
+
+# Regression Analysis---lm()
+Analysis of `usair` data which is discussed by Wang et al(2018): Bayesian Regression Modeling with INLA. CRC Press. In this data `SO2`content in air is the response and there are 5 predictors
+```{r,message=FALSE}
+require(brinla)
+data(usair)
+names(usair)
+M1usair=lm(SO2~.,data=usair)
+summary(M1usair)$coef
+```
+
+## Stepwise Regression
+It may be noted that except `wind`, `precip` and `days` all the predictors are significant. We can use stepwise regression to see which variables are to be dropped
+```{r}
+library(MASS)
+M1step=stepAIC(M1usair,trace=FALSE)
+M1step$anova
+```
+Thus only `days` is dropped from the model.
+
+## Factorial experiment with 2 factors in RBD
+The data `piarelief` discussed by Wang et al(2018): __Bayesian Regression Modeling with INLA__. CRC Press. is a data in which response is the pain relief score `Relief` and `PainLevel` is the blocking factor, the two treatment factors each with two levels are: `Codeine` and `Accupuncture`. Details are available with INLA book mentioned above.
+```{r}
+#create factor variables
+painrelief=read.table("painrelief.txt",header=TRUE)
+painrelief$PainLevel=as.factor(painrelief$PainLevel) #Blocking factor
+painrelief$Codeine=as.factor(painrelief$Codeine)
+painrelief$Acupuncture=as.factor(painrelief$Acupuncture)
+```
+
+## Fit the factorial model
+```{r}
+M2pain=lm(Relief~PainLevel+Codeine*Acupuncture,data=painrelief)
+summary(M2pain)
+```
+It is evident that blocking is effective. Moreover, two main effects are significant whereas interaction effect is not, as corresponding `p-values` are less than 0.05.
+
+## Graphic summary of above object---`coefplot()` of **arm**
+We can have a nice graphic summary of above fitted object using `coefplot()` of **arm** package. This plot provides statistical inference in a graphic output. 
+```{r,message=FALSE}
+require(arm)
+coefplot(M2pain)
+```
+
+## Look into graphics---`plot.design` and `boxplot`
+```{r}
+plot.design(painrelief,las=2)
+```
+
+This plot of means is self explanatory. Long horizontal line represents overall mean, whereas small horizontal lines represent means at different levels of the factors. We can have corresponding boxplots to look into variability
+```{r}
+opar=par(mfrow=c(1,2), mar=c(4,8,2,1))
+plot(Relief~Codeine,data=painrelief)
+plot(Relief~Acupuncture,data=painrelief)
+par(opar)
+```
+
+# Ridge Regression for multicollinearity---`lm.ridge()` in **MASS**
+
+When predictors are highly correlated the problem of multicollinearity arises in which `se(beta)` gets inflated or unstable. We take data `frencheconomy` in which `IMPORT` is the response and predictors are domestic production (`DOPROD`), stock formation (`STOCK`), and domestic consumption (`CONSUM`). Let us see the data
+
+```{r,message=FALSE}
+data(frencheconomy, package="brinla")
+head(frencheconomy,n=4)
+#get the correlation matrix among predictors third to fifth columns
+cor(frencheconomy[,c(3,4,5)])
+```
+See the high correlation between `DOPROD` and `CONSUM`. This will cause the problem of multicollinearity. First we scale the data
+```{r,message=FALSE}
+fe.scaled=cbind(frencheconomy[,1:2],scale(frencheconomy[,c(-1,-2)]))
+head(fe.scaled)
+```
+We fit this data now
+```{r,message=FALSE}
+library(MASS)
+ridge2=lm.ridge(IMPORT~DOPROD+STOCK+CONSUM,data=fe.scaled, lambda=seq(0,1,length=100))
+ridge2.final=lm.ridge(IMPORT~DOPROD+STOCK+CONSUM,data=fe.scaled,lambda=ridge2$kHKB)
+ridge2.final
+```
+
+## Regression with auroregressive errors
+
+This is case when errors are correlated, example is time series data. In this situation $\sigma^{2}I$ is replaced by $\Sigma$ which leads to generalized least . The function `gls` in the package **nlme** is used to model such data. __First order autoregressive process__, `AR(1)`:
+$$e_t=\rho e_{t-1}+\eta_t$$. Note that $\rho=cor(e_{t-1}, e_t)$ is the error autocorrelation at lag 1 and $\eta_t\sim N(0,\sigma_{\eta}^2)$. 
+
+```{r}
+require(brinla)
+data(nzunemploy,package="brinla")
+nzunemploy$centeredadult=with(nzunemploy,adult-mean(adult)) #centering
+require(nlme)
+nzunemploy.gls<-gls(youth~centeredadult*policy,correlation=corAR1(form=~1),data=nzunemploy)
+summary(nzunemploy.gls)
+```
+
+# Generalized Linear Models
+Generalized linear model is an extension of linear model in which error distribution gets extended from Normal to an exponential family of sufficient statistic. This family includes Normal, Gamma, Poisson, Bernoulli, Binomial, Negative Binomial etc. Thus, continous as well as discrete resposes are taken into account. Consequently a rich family of distributions can be fitted for discrete as well as continous data. We shall begin with binary response data. 
+
+## Low birth weight data
+To illustrate logistic regression model, we are going to analyze a data set that contains information on 189 births to women seen in the obstetric clinic, where data were collected as a part of a larger study at Baystate Medical Center in Springfield. The response variable `LOW` is a binary outcome indicating birth rate less than 2500 grams, which has been of concern to physician for years. The predictors are `AGE`, `LWT`, `RACE`, `SMOKE`, `HT`, `UI`, and `FTV`. The details of the data are available with the data object `lowbwt` with **brinla** package.
+```{r,message=FALSE}
+require(brinla)
+data(lowbwt,package="brinla")
+head(lowbwt)
+str(lowbwt)
+lowbwt$RACE=factor(lowbwt$RACE,labels = c("white","black","other"))
+lowbwt$SMOKE=factor(lowbwt$SMOKE,labels=c("no","yes"))
+lowbwt$HT=factor(lowbwt$HT,labels=c("no","yes"))
+lowbwt$UI=factor(lowbwt$UI,labels=c("no","yes"))
+str(lowbwt)
+```
+
+## Fitting Logistic regression model---`glm()`
+
+```{r}
+M1low=glm(LOW~AGE+LWT+RACE+SMOKE+HT+UI+FTV,data=lowbwt,family=binomial())
+round(coef(summary(M1low)),3)
+```
+It is evident from above output that except `Age` and `FTV` remaining all the regressor are significant. Thus, the odds ratio for `LWT` is $exp(-0.017)=0.98$. It is interpreted as we expect to see $1.74\%(=1-0.98)$ decreases in the odds of having a low birth weight baby for a one-unit increase in mother's weight, assuming all other predictors are fixed. This fact can be represented graphically using `coefplot()` of **arm** package 
+```{r,message=FALSE}
+require(arm)
+opar=par(mar=c(4,10,4,2))# set margins of the figure
+coefplot(M1low)
+par(opar)# return to the original settings
+```
+
+## Count reaponses
+We shall cover modeling of count data using Poisson regression, and Negative Binomial regression.
+
+### Poisson regression model
+`AIDS` data available with **brinla** package provides a relationship between number of deaths `DEATH` with `TIME` time measured in multiple of three months after January 1983(continous). 
+```{r,message=FALSE}
+require(brinla)
+data(AIDS,package="brinla")
+str(AIDS)
+```
+To understand the data we make a histogram of `DEATHS` and we shall make a plot of `DEATHS` Vs `TIME`. From these plots it is evident that the frequency distribution of `DEATHS` is highly skewed(not Normal). Moreover, there is a non linear relationship between `DEATHS` and `TIME`.
+```{r,message=FALSE}
+opar=par(mfrow=c(1,2))
+plot(DEATHS~TIME, data=AIDS,main="")
+hist(AIDS$DEATHS,xlab = "DEATHS",main="")
+par(opar)
+```
+
+Now we fit the model using `glm()` with `family=poisson()`
+```{r}
+M1aids=glm(DEATHS~log(TIME),data=AIDS,family=poisson())
+summary(M1aids)
+```
+Thus, estimated equation is $$\hat{\mu}=exp(-1.9442+2.1748\times log(TIME))$$
+```{r,message=FALSE}
+require(arm)
+coefplot(M1aids)
+```
+
+Since, vertical dashed line at 0 is absent, hence regression coefficient of `log(TIME)` is significant.
+
+## Negative Binomial regression model
+It is used when over dispersion is found in the data. We are going to discuss `crab` data discussed by Agresti(2012) and same data is discussed by Wang et al(2018). The response variable in this data is number of satellites (`SATELLITES`) for each female crab, and there are four predictors.
+```{r,message=FALSE}
+require(brinla)
+data(crab, package="brinla")
+str(crab)
+```
+
+### Fitting of the  model 
+Negative Binomial cab be fitted with the function `glm.nb` available with **MASS** package.
+```{r,message=FALSE}
+require(MASS)
+M1crab=glm.nb(SATELLITES~COLOR+SPINE+WIDTH,data=crab)
+round(coef(summary(M1crab)),3)
+```

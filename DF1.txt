@@ -1,0 +1,6 @@
+"height" "weight" "female" "name"
+"1" 168 60 0 "Ram"
+"2" 165 55 1 "Nazia"
+"3" 170 68 0 "Asjad"
+"4" 162 57 0 "Ajmal"
+"5" 168 58 1 "Radhika"
